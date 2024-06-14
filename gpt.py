@@ -1,6 +1,6 @@
 import telebot
 import ns
-from telebot.types import ReplyKeyboardMarkup, KeyboardButton
+from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup,InlineKeyboardButton
 import random
 import pyautogui
 
@@ -8,12 +8,12 @@ from openai import OpenAI
 client = OpenAI(api_key="sk-proj-4hYf1piDCKcaL2G5AsXAT3BlbkFJO4JS7cRz7BUD1qx7oYkJ")
 bot = telebot.TeleBot(ns.TOKEN)
 
+donnate  = []
 
 @bot.message_handler(commands = ["start"])
 def kinder(message):
     knopki = ReplyKeyboardMarkup(resize_keyboard=True)
-    btr1 = KeyboardButton("купи больше попыток")
-    btr2 = KeyboardButton("нарисуй картинку")
+    btr1 = KeyboardButton("купить подписку")
     knopki.add(btr1)
     bot.send_message(message.from_user.id, '999', reply_markup = knopki)
 @bot.message_handler(content_types=["text"])
@@ -22,25 +22,34 @@ def ky(message):
     print(message.from_user.first_name)
     print(message.from_user.username)
     print(message.from_user.id)
-    # response = client.chat.completions.create(
-    # model="gpt-4o",
-    # messages=[
-    #     {"role": "system", "content": ns.PROMPT },
-    #     {"role": "user", "content": message.text}])
-    # ufx = response.choices[0].message.content
-    # bot.send_message(message.from_user.id, ufx)
+    response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {"role": "system", "content": ns.PROMPT },
+        {"role": "user", "content": message.text}])
+    ufx = response.choices[0].message.content
+    bot.send_message(message.from_user.id, ufx)
     if message.text[0:7].lower() == "нарисуй":
+        if message.from_user.id in donnate:
+            response = client.images.generate(
+                model="dall-e-3",
+                prompt=message.text[7:],
+                size="1024x1024",
+                quality="standard",
+                n=1,)
 
-        response = client.images.generate(
-            model="dall-e-3",
-            prompt=message.text[7:],
-            size="1024x1024",
-            quality="standard",
-            n=1,)
+            image_url = response.data[0].url
 
-        image_url = response.data[0].url
+            bot.send_photo(message.from_user.id,image_url)
+        else: bot.send_message(message.from_user.id,"купи подпискуууу")
 
-        bot.send_photo(message.from_user.id,image_url)
+    if message.text == "купить подписку":
+        knopki = InlineKeyboardMarkup()
+        btr = InlineKeyboardButton("купить подписку",url = "https://www.htx.com/ru-ru/?utm_source=UT&utm_medium=prodnews&inviter_id=11350560")
+        knopki.add(btr)
+        bot.send_message(message.from_user.id,"огда тебе сюда",reply_markup=knopki)
+
+
 
 
 bot.polling()
