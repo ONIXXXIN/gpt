@@ -1,9 +1,5 @@
-x = "/нарисуй мне оч крутую картинку"
-print(x[0:8])
-
-
-
-"""
-эта тема называется "срезы в питоне", правило трёх С (старт/стоп/степ)
-https://pythonworld.ru/osnovy/indeksy-i-srezy.html - здесь описаны списки, но со строчками работает точно также
-"""
+perm = ["au", "fr", "hg"]
+try:
+    print(perm[3])
+except IndexError:
+    print("xyz")
