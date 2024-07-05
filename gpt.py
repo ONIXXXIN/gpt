@@ -9,18 +9,29 @@ bot = telebot.TeleBot(ns.TOKEN)
 uriy = []
 donnate = [629401483, 6871116267, 5281764431, 136962775]
 
+prompts = {}
+
 
 @bot.message_handler(commands=["start"])
 def kinder(message):
+    prompts [message.from_user.id] = "шо ты лысый"
+    print(prompts)
     knopki = ReplyKeyboardMarkup(resize_keyboard=True)
     btr1 = KeyboardButton("купить подписку")
     knopki.add(btr1)
     bot.send_message(message.from_user.id,
                      "To have the bot draw a picture, write “draw” and then a description of the picture.Sample:draw a cat \n"
-                     "To talk to GPT - just send a message. \n\n"
+                     "To talk to GPT - just send a message. \n"
+                     "To change the prompt (the manner of communication, etc.), write \"/prompt (and here is your prompt)\", if you want the bot to answer you in your language, write the prompt in your language. \n\n"
                      "Чтобы бот нарисовал картинку - напиши «нарисуй» , а затем описание картинки.Шаблон:нарисуй котика \n"
-                     "Чтобы поговорить с GPT - просто отправьте сообщение.", reply_markup=knopki)
+                     "Чтобы поговорить с GPT - просто отправьте сообщение .\n"
+                     "Чтобы поменять промт(манеру общения и т д) напиши, \"/prompt(а тут твой промт)\", если хочешь чтобы бот отвечал тебе на твоем языке пиши промт на твоем языке", reply_markup=knopki)
 
+@bot.message_handler(commands=["prompt"])
+def pilesos(message):
+    ananas = message.text[8:]
+    prompts[message.from_user.id] = ananas
+    print(prompts)
 
 @bot.message_handler(content_types=["text"])
 def ky(message):
