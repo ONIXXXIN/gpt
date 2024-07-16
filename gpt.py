@@ -2,7 +2,7 @@ import telebot
 import ns
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 
-from openai import OpenAI
+from openai import OpenAI, PermissionDeniedError
 
 client = OpenAI(api_key="sk-proj-4hYf1piDCKcaL2G5AsXAT3BlbkFJO4JS7cRz7BUD1qx7oYkJ")
 bot = telebot.TeleBot(ns.TOKEN)
@@ -58,19 +58,25 @@ def ky(message):
     elif message.text == "купить подписку":
         knopki = InlineKeyboardMarkup()
         btr = InlineKeyboardButton("купить подписку",
-                                   url="https://www.youtube.com/watch?v=jz2qWxKYBqw&ab_channel=MadFutPlays")
+                                   url = "https://www.google.com/search?sca_esv=04aa412ff406bf20&sxsrf=ADLYWILpUGznJkslni83XOud41G792GQjw:1720465697579&q=%D1%83%D0%BD%D0%BD%D0%B2+%D0%B1%D0%B5%D0%B7+%D0%B4%D0%B0%D1%82%D1%8B&stick=H4sIAAAAAAAAAONgFuLVT9c3NEzLyk0pMcgpVIJwM0yLCo2zy020BH1LizOTHYtKMotLQvKD8_PSF7FKXGy-sBcINylc2Hhh64XtChe2XNhwseliNwAmP-KzTgAAAA&sa=X&ved=2ahUKEwjRxoCWkpiHAxVkQlUIHRxaBekQri56BAhKEAU&biw=1270&bih=582&dpr=1.25")
         knopki.add(btr)
         bot.send_message(message.from_user.id, "тогда тебе сюда", reply_markup=knopki)
 
 
     else:
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": ns.PROMPT},
-                {"role": "user", "content": message.text}])
-        ufx = response.choices[0].message.content
-        bot.send_message(message.from_user.id, ufx)
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": ns.PROMPT},
+                    {"role": "user", "content": message.text}])
+            ufx = response.choices[0].message.content
+        except PermissionDeniedError:
+            print("dix petits nègres")
+        else:
+           bot.send_message(message.from_user.id, ufx)
+
+
 
 
 bot.polling()
